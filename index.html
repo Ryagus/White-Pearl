@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стоматология «Белая Жемчужина»</title>
+    <style>
+        /* Базовые стили */
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #0056b3;
+            --text-color: #333;
+            --bg-color: #f8f9fa; 
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            /* --- ЗАДНИЙ ФОН САЙТА --- */
+            background-image: url('Images/BG.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative; 
+            display: flex;
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+        
+        /* Overlay для читаемости текста поверх фона */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(248, 249, 250, 0.4); 
+            z-index: -1;
+        }
+
+        /* --- ЛИПКИЙ ХЕДЕР --- */
+        header {
+            position: sticky; 
+            top: 0;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--primary-color);
+        }
+
+        /* Контент страниц */
+        main {
+            min-height: 80vh;
+            flex-grow: 1;
+        }
+        .page {
+            display: none; 
+            padding: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s;
+        }
+        .page.active {
+            display: block; 
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Оформление блоков */
+        h1, h2, h3 { color: var(--primary-color); }
+        h1, h2 { text-align: center; }
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.85); 
+            border-radius: 10px;
+            backdrop-filter: blur(5px); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+        .btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover { background-color: var(--secondary-color); }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* Стили для фотографий врачей */
+        .doctor-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .doctor-card img {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%; 
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Текстовые blocks для О клинике */
+        .about-section {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* --- ИНТЕРАКТИВНЫЕ КАРТОЧКИ УСЛУГ --- */
+        .service-card {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        .service-card h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .service-card .price-tag {
+            margin-top: auto;
+            color: #28a745;
+            font-size: 16px;
+        }
+        .service-toggle-btn {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .service-toggle-btn::after {
+            content: '▼';
+            font-size: 9px;
+            transition: transform 0.3s ease;
+        }
+        .service-card.expanded .service-toggle-btn::after {
+            transform: rotate(180deg);
+        }
+        .service-details {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, margin-top 0.3s ease;
+            font-size: 14px;
+            color: #555;
+            border-top: 1px dashed #ddd;
+            padding-top: 0;
+            margin-top: 0;
+        }
+        .service-card.expanded .service-details {
+            max-height: 2000px; /* Большой запас для плавного раскрытия любого объема текста */
+            opacity: 1;
+            margin-top: 15px;
+            padding-top: 15px;
+            transition: max-height 0.4s cubic-bezier(0.99, 0.01, 0.45, 1.1), opacity 0.4s ease, margin-top 0.3s ease;
+        }
+        .service-details ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .service-details ul li {
+            margin-bottom: 6px;
+        }
+
+        /* --- БОЛЬШОЙ ФУТЕР --- */
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 50px 50px 20px;
+            margin-top: auto;
+            font-size: 14px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .footer-col {
+            flex: 1;
+            min-width: 220px;
+        }
+        .footer-col h4 {
+            color: #fff;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            position: relative;
+            font-weight: 600;
+        }
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        .footer-col p {
+            color: #b3b3b3;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+        .footer-col ul li a {
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: color 0.3s, padding-left 0.3s;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .footer-col ul li a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+        }
+        .footer-disclaimer {
+            margin-top: 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* --- АДАПТАЦИЯ ПОД ТЕЛЕФОН --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column; 
+                align-items: center;
+                padding: 10px;
+            }
+            .logo {
+                margin-bottom: 10px;
+            }
+            nav ul {
+                flex-direction: column; 
+                gap: 10px;
+                width: 100%;
+                align-items: center;
+            }
+            nav ul li {
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li a {
+                display: block;
+                padding: 10px;
+                font-size: 16px;
+            }
+            .page {
+                padding: 30px 15px;
+            }
+            .hero {
+                padding: 40px 10px;
+            }
+            .hero h1 { font-size: 24px; }
+            .btn {
+                padding: 12px 24px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .grid {
+                gap: 15px;
+            }
+            .doctor-card img {
+                width: 150px;
+                height: 150px;
+            }
+            footer {
+                padding: 40px 20px 20px;
+            }
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .footer-col {
+                min-width: 100%;
+            }
+            .footer-col h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .footer-col p, .footer-col ul {
+                text-align: center;
+            }
+            .footer-col ul li a:hover {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="openPage('home')">🦷 Белая Жемчужина</div>
+        <nav>
+            <ul>
+                <li><a onclick="openPage('home')" class="nav-link active" id="link-home">Главная</a></li>
+                <li><a onclick="openPage('services')" class="nav-link" id="link-services">Услуги</a></li>
+                <li><a onclick="openPage('doctors')" class="nav-link" id="link-doctors">Наши врачи</a></li>
+                <li><a onclick="openPage('about')" class="nav-link" id="link-about">О клинике</a></li>
+                <li><a onclick="openPage('contacts')" class="nav-link" id="link-contacts">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Здоровая улыбка — это просто!</h1>
+                <p>Современная стоматология с заботой о каждом пациенте. Лечение без боли и страха на передовом оборудовании в Москве.</p>
+                <button class="btn" onclick="openPage('contacts')">Записаться на бесплатный осмотр</button>
+            </div>
+
+            <div class="grid" style="text-align: center; margin-bottom: 50px;">
+                <div class="card">
+                    <h2 style="margin: 0; font-size: 36px;">15+</h2>
+                    <p style="margin: 5px 0 0; font-weight: 500;">лет успешной работы</p>
+                </div>
+                <div class="card">
+                    <h2 style="margin: 0; font-size: 36px;">10 000+</h2>
+                    <p style="margin: 5px 0 0; font-weight: 500;">довольных пациентов</p>
+                </div>
+                <div class="card">
+                    <h2 style="margin: 0; font-size: 36px;">25 000+</h2>
+                    <p style="margin: 5px 0 0; font-weight: 500;">вылеченных зубов</p>
+                </div>
+            </div>
+
+            <h2>Почему выбирают нас?</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🔬 Передовые технологии</h3>
+                    <p>Используем современные цифровые томографы, японские микроскопы и швейцарские материалы премиум-класса.</p>
+                </div>
+                <div class="card">
+                    <h3>🛡️ Честная гарантия</h3>
+                    <p>Мы полностью уверены в качестве своей работы, поэтому предоставляем официальную гарантию на лечение до 5 лет.</p>
+                </div>
+                <div class="card">
+                    <h3>👨‍⚕️ Экспертная команда</h3>
+                    <p>Наши врачи — специалисты высшей категории, регулярно проходящие стажировки в ведущих клиниках Европы.</p>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 50px;">Специальные предложения</h2>
+            <div class="grid">
+                <div class="card" style="border-left: 5px solid #28a745;">
+                    <span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">АКЦИЯ</span>
+                    <h3 style="margin-top: 10px;">Семейная скидка</h3>
+                    <p>Приходите на лечение всей семьей и получайте постоянную скидку 10% на все терапевтические услуги для каждого члена семьи.</p>
+                </div>
+                <div class="card" style="border-left: 5px solid #28a745;">
+                    <span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">АКЦИЯ</span>
+                    <h3 style="margin-top: 10px;">Белоснежная улыбка к лету</h3>
+                    <p>Профессиональное отбеливание по технологии Zoom 4 + ультразвуковая чистка в подарок всего за 19 900 ₽ вместо 25 000 ₽.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- ИНТЕРАКТИВНАЯ СТРАНИЦА УСЛУГ --- -->
+        <div id="services" class="page">
+            <h1>Наши услуги</h1>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 30px;">Мы оказываем полный спектр высокотехнологичной стоматологической помощи для взрослых и детей. Нажмите на любую услугу, чтобы узнать подробности.</p>
+            
+            <div class="grid">
+                <!-- Карта 1 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Лечение кариеса и каналов</h3>
+                    <p>Безболезненное лечение кариеса, пульпита и периодонтита с использованием дентального микроскопа. Установка световых пломб.</p>
+                    <p class="price-tag"><strong>Цена: от 3 000 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Что включено в стоимость:</strong></p>
+                        <ul>
+                            <li>Применение высокоточного немецкого микроскопа Leica.</li>
+                            <li>Абсолютная изоляция зуба системой коффердам.</li>
+                            <li>Эстетическая реставрация нанокомпозитами (Япония, США).</li>
+                            <li>Трехмерное пломбирование каналов горячей гуттаперчей.</li>
+                        </ul>
+                        <p>Лечение под микроскопом позволяет удалять исключительно пораженные ткани, сохраняя здоровые стенки зуба, что продлевает его жизнь в 2-3 раза.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 2 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Имплантация зубов</h3>
+                    <p>Восстановление зубов за 1 день швейцарскими и корейскими имплантами (Straumann, Osstem). Пожизненная гарантия на имплант.</p>
+                    <p class="price-tag"><strong>Цена: от 25 000 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Преимущества нашей имплантации:</strong></p>
+                        <ul>
+                            <li>Компьютерное 3D-планирование и создание хирургических шаблонов.</li>
+                            <li>Приживаемость имплантов по статистике клиники — 99.4%.</li>
+                            <li>Возможность проведения экспресс-имплантации сразу после удаления зуба.</li>
+                            <li>Использование оригинальных титановых систем Straumann (Швейцария).</li>
+                        </ul>
+                        <p>Все операции проводит челюстно-лицевой хирург со стажем более 15 лет в условиях полной стерильности.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 3 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Профессиональное отбеливание</h3>
+                    <p>Бережное осветление эмали до 8 оттенков по самой безопасной технологии ZOOM 4. Результат за один визит.</p>
+                    <p class="price-tag"><strong>Цена: от 18 500 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>О процедуре Philips Zoom 4:</strong></p>
+                        <ul>
+                            <li>Новейшая лампа с холодным светодиодным источником (без перегрева эмали).</li>
+                            <li>Сниженная концентрация перекиси водорода в геле — безопасность для зубов.</li>
+                            <li>Обязательное глубокое фторирование Relief ACP после сеанса.</li>
+                            <li>Результат сохраняется до 3-5 лет при соблюдении «белой диеты» в первые дни.</li>
+                        </ul>
+                        <p>Процедура занимает всего 45 минут и позволяет получить естественную белоснежную улыбку без вреда для здоровья.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 4 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Исправление прикуса (Ортодонтия)</h3>
+                    <p>Выравнивание зубов любой сложности с помощью современных брекет-систем (Damon) или невидимых прозрачных элайнеров.</p>
+                    <p class="price-tag"><strong>Цена: от 6 000 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Варианты исправления прикуса:</strong></p>
+                        <ul>
+                            <li>Самолигирующие брекеты Damon (США) — более редкие визиты к врачу.</li>
+                            <li>Эстетические керамические и сапфировые брекеты (незаметны на зубах).</li>
+                            <li>Прозрачные каппы-элайнеры для незаметного и комфортного лечения.</li>
+                            <li>Цифровой виртуальный сетап — вы увидите будущий результат еще до начала лечения.</li>
+                        </ul>
+                        <p>Мы исправляем патологии прикуса в любом возрасте, подбирая оптимальную систему под ваш бюджет и образ жизни.</p>
+                    </div>
+                </div>
+                
+                <!-- Карта 5 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Профессиональная гигиена (Air Flow)</h3>
+                    <p>Комплексное удаление зубного камня ультразвуком, снятие мягкого налета Air Flow, полировка пастами и фторирование эмали.</p>
+                    <p class="price-tag"><strong>Цена: от 4 500 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Этапы комплексной чистки (4 в 1):</strong></p>
+                        <ul>
+                            <li>Ультразвуковое удаление твердых зубных отложений (камней).</li>
+                            <li>Очищение межзубных промежутков швейцарским аппаратом Air Flow.</li>
+                            <li>Полировка эмали специальными пастами для предотвращения фиксации налета.</li>
+                            <li>Покрытие зубов защитным фторлаком для укрепления и снижения чувствительности.</li>
+                        </ul>
+                        <p>Рекомендуется проводить процедуру каждые 6 месяцев для профилактики кариеса и воспаления десен.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 6 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Протезирование и виниры</h3>
+                    <p>Эстетическое восстановление: ультратонкие керамические виниры E-max, циркониевые и металлокерамические коронки, протезы.</p>
+                    <p class="price-tag"><strong>Цена: от 15 000 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Ортопедические решения в клинике:</strong></p>
+                        <ul>
+                            <li>Керамические виниры E-max толщиной от 0.3 мм без сильной обточки зубов.</li>
+                            <li>Коронки из диоксида циркония по технологии CAD/CAM (идеальное прилегание).</li>
+                            <li>Вкладки и накладки вместо массивных пломб при сильном разрушении.</li>
+                            <li>Современные съемные и частично-съемные нейлоновые протезы.</li>
+                        </ul>
+                        <p>Наша цифровая лаборатория воссоздает форму и цвет зубов со 100% точностью, делая коронки неотличимыми от родных зубов.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 7 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Детская стоматология</h3>
+                    <p>Бережное лечение молочных зубов без слез и страха. Адаптация ребенка к приему в игровой форме. Герметизация фиссур.</p>
+                    <p class="price-tag"><strong>Цена: от 2 000 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Забота о маленьких пациентах:</strong></p>
+                        <ul>
+                            <li>Адаптационный прием — знакомим малыша с инструментами в форме сказки.</li>
+                            <li>Лечение начального кариеса без бормашины по методике Icon (Германия).</li>
+                            <li>Эффективная и безопасная аппликационная анестезия (вкусный гель).</li>
+                            <li>Герметизация фиссур для надежной защиты постоянных зубов от кариеса.</li>
+                        </ul>
+                        <p>В конце каждого приема маленькие супергерои обязательно получают приятный подарок от клиники за смелость.</p>
+                    </div>
+                </div>
+
+                <!-- Карта 8 -->
+                <div class="card service-card" onclick="toggleService(this)">
+                    <h3>Хирургия и удаление зубов</h3>
+                    <p>Атравматичное и быстрое удаление зубов любой сложности, включая сложные ретинированные зубы мудрости («восьмерки»).</p>
+                    <p class="price-tag"><strong>Цена: от 3 500 ₽</strong></p>
+                    <div class="service-toggle-btn">Развернуть описание</div>
+                    <div class="service-details">
+                        <p><strong>Особенности хирургического приема:</strong></p>
+                        <ul>
+                            <li>Использование пьезотома (ультразвукового ножа) — работа без повреждения десны.</li>
+                            <li>Сложные удаления ретинированных (непрорезавшихся) зубов мудрости.</li>
+                            <li>Подсадка костной ткани при ее дефиците для последующей имплантации.</li>
+                            <li>Закладывание биоматериалов в лунку для мгновенной регенерации.</li>
+                        </ul>
+                        <p>Мы делаем все, чтобы минимизировать послеоперационный отек. После процедуры врач выдает подробную карту рекомендаций.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="doctors" class="page">
+            <h1>Команда профессионалов</h1>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 30px;">Наши специалисты регулярно повышают квалификацию и находят подход к каждому пациенту.</p>
+            <div class="grid">
+                <div class="card doctor-card">
+                    <img src="Images/Иванов.jpg" alt="Иванов Иван">
+                    <h2>Иванов Иван Иванович</h2>
+                    <p><strong>Главный врач, стоматолог-хирург, имплантолог</strong></p>
+                    <p>Стаж работы: 15 лет. Специализируется на тотальной реконструкции челюсти и сложной имплантации в сложных клинических случаях.</p>
+                </div>
+                <div class="card doctor-card">
+                    <img src="Images/Смирнова.jpg" alt="Смирнова Анна">
+                    <h2>Смирнова Анна Сергеевна</h2>
+                    <p><strong>Стоматолог-терапевт, эндодонтист</strong></p>
+                    <p>Стаж работы: 10 лет. Эксперт в эстетической реставрации зубов и высокоточном лечении корневых каналов под микроскопом.</p>
+                </div>
+                <div class="card doctor-card">
+                    <img src="Images/Петров.jpg" alt="Петров Алексей">
+                    <h2>Петров Алексей Владимирович</h2>
+                    <p><strong>Врач-ортодонт</strong></p>
+                    <p>Стаж работы: 8 лет. Занимается исправлением прикуса у детей и взрослых с помощью передовых брекет-систем и элайнеров.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="page">
+            <h1>О клинике «Белая Жемчужина»</h1>
+            
+            <div class="about-section">
+                <h3>Наша история и миссия</h3>
+                <p>Наша клиника была основана в 2010 году. За 16 лет успешной работы мы прошли путь от небольшого стоматологического кабинета до высокотехнологичного медицинского центра цифровой стоматологии. За это время мы подарили здоровые и красивые улыбки более чем 10 000 пациентов.</p>
+                <p>Наша главная миссия — доказать, что современное стоматологическое лечение может быть абсолютно безболезненным, комфортным и доступным. Мы не просто лечим зубы — мы повышаем качество жизни наших пациентов, возвращая им уверенность в себе.</p>
+            </div>
+
+            <h3>Наши ценности и стандарты</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>🔒 100% Безопасность</h4>
+                    <p>Мы строго соблюдаем программы «Анти-СПИД» и «Анти-Гепатит». В клинике действует централизованное стерилизационное отделение, гарантирующее абсолютную чистоту инструментов по стандартам ISO.</p>
+                </div>
+                <div class="card">
+                    <h4>🤝 Честность и открытость</h4>
+                    <p>План лечения и его финальная стоимость фиксируются в договоре до начала всех манипуляций. У нас нет скрытых наценок, мелкого шрифта или навязанных медицинских услуг.</p>
+                </div>
+                <div class="card">
+                    <h4>🛋️ Высокий уровень комфорта</h4>
+                    <p>Эргономичные стоматологические кресла премиум-класса, расслабляющая музыка, просмотр фильмов во время процедур и заботливый персонал помогут забыть о дентофобии раз и навсегда.</p>
+                </div>
+            </div>
+
+            <div class="about-section" style="margin-top: 30px;">
+                <h3>Техническое оснащение</h3>
+                <p>Мы инвестируем в передовые технологии, позволяющие проводить диагностику и лечение с максимальной точностью:</p>
+                <ul>
+                    <li><strong>Дентальный микроскоп Leica (Германия):</strong> позволяет врачу видеть каналы зуба под 30-кратным увеличением, исключая риск врачебной ошибки.</li>
+                    <li><strong>Конусно-лучевой томограф (КЛКТ):</strong> дает сверхточный 3D-снимок челюсти при минимальной лучевой нагрузке, что необходимо для качественной имплантации.</li>
+                    <li><strong>Интраоральный сканер:</strong> заменяет классические неприятные слепки зубов на быстрое и точное цифровое 3D-сканирование.</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h3>Лицензии и сертификаты</h3>
+                <p>Клиника осуществляет медицинскую деятельность на основании официальной лицензии № ЛО-77-01-023456 от 01.01.2023 г., выданной Департаментом здравоохранения города Москвы. Все используемые материалы сертифицированы на территории РФ.</p>
+            </div>
+        </div>
+
+        <div id="contacts" class="page">
+            <h1>Свяжитесь с нами</h1>
+            <div class="grid">
+                <div class="card">
+                    <h3>Наш адрес:</h3>
+                    <p>📍 г. Москва, ул. Здоровая, д. 10 (в 5 минутах пешком от метро)</p>
+                    <h3>Телефон:</h3>
+                    <p>📞 <a href="tel:+74951234567" style="color: inherit; text-decoration: none; font-weight: bold;">+7 (495) 123-45-67</a></p>
+                    <h3>Часы работы:</h3>
+                    <p>🕒 Пн-Вс: с 09:00 до 21:00 (без перерывов и выходных)</p>
+                </div>
+                <div class="card">
+                    <h3>Оставить заявку</h3>
+                    <p style="font-size: 14px; margin-bottom: 15px;">Оставьте контакты, и наш администратор перезвонит вам в течение 10 минут для подбора удобного времени.</p>
+                    <form onsubmit="alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.'); return false;">
+                        <input type="text" placeholder="Ваше имя" required style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                        <input type="tel" placeholder="Ваш телефон" required style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                        <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Перезвоните мне</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- --- БОЛЬШОЙ ФУТЕР --- -->
+    <footer>
+        <div class="footer-container">
+            <!-- Колонка 1: О бренде -->
+            <div class="footer-col">
+                <h4>🦷 Белая Жемчужина</h4>
+                <p>Стоматологический центр цифровых технологий премиум-класса. Работаем для вас в Москве с 2010 года.</p>
+                <p style="font-size: 11px; color: #666; margin-top: 15px;">Лицензия № ЛО-77-01-023456 от 01.01.2023 г.</p>
+            </div>
+            
+            <!-- Колонка 2: Навигация -->
+            <div class="footer-col">
+                <h4>Навигация</h4>
+                <ul>
+                    <li><a onclick="openPage('home')">Главная страница</a></li>
+                    <li><a onclick="openPage('services')">Наши услуги</a></li>
+                    <li><a onclick="openPage('doctors')">Медицинский персонал</a></li>
+                    <li><a onclick="openPage('about')">О клинике</a></li>
+                    <li><a onclick="openPage('contacts')">Контакты и запись</a></li>
+                </ul>
+            </div>
+            
+            <!-- Колонка 3: Популярные направления -->
+            <div class="footer-col">
+                <h4>Популярные услуги</h4>
+                <ul>
+                    <li><a onclick="openPage('services')">Лечение кариеса и каналов</a></li>
+                    <li><a onclick="openPage('services')">Имплантация под ключ</a></li>
+                    <li><a onclick="openPage('services')">Отбеливание зубов Zoom 4</a></li>
+                    <li><a onclick="openPage('services')">Установка виниров и коронок</a></li>
+                    <li><a onclick="openPage('services')">Детская стоматология</a></li>
+                </ul>
+            </div>
+            
+            <!-- Колонка 4: Контакты -->
+            <div class="footer-col">
+                <h4>Контакты</h4>
+                <p>📍 г. Москва, ул. Здоровая, д. 10</p>
+                <p>📞 <a href="tel:+74951234567" style="color: inherit; text-decoration: none; font-weight: bold;">+7 (495) 123-45-67</a></p>
+                <p>🕒 Ежедневно: с 09:00 до 21:00</p>
+            </div>
+        </div>
+        
+        <!-- Нижняя плашка -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 Стоматологическая клиника «Белая Жемчужина». Все права защищены. Информация на сайте не является публичной офертой.</p>
+            <div class="footer-disclaimer">Имеются противопоказания. Необходима консультация специалиста.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Функция переключения страниц
+        function openPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => link.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('link-' + pageId).classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // НОВАЯ ФУНКЦИЯ: раскрытие и скрытие подробного описания услуги
+        function toggleService(card) {
+            card.classList.toggle('expanded');
+            const toggleBtn = card.querySelector('.service-toggle-btn');
+            
+            if (card.classList.contains('expanded')) {
+                toggleBtn.textContent = 'Свернуть описание';
+            } else {
+                toggleBtn.textContent = 'Развернуть описание';
+            }
+        }
+    </script>
+</body>
+</html>
